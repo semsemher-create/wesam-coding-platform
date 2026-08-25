@@ -365,14 +365,11 @@
     }
 
 
-    function openEditor(language) {
-
-        alert(
-            "محرر " +
-            language +
-            " سيتم تشغيله في الخطوة التالية."
-        );
-    }
+function openEditor(language) {
+    window.location.href =
+        "editor.html?language=" +
+        encodeURIComponent(language);
+}
 
 
     /*

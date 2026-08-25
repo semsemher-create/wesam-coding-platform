@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>محرر الأكواد - منصة الوسام</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Tahoma, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #1e293b;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        select,
+        button {
+            padding: 10px 15px;
+            border-radius: 7px;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        select {
+            background: white;
+            color: #111827;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+
+        .back {
+            background: #64748b;
+        }
+
+        .run {
+            background: #16a34a;
+        }
+
+        .test {
+            background: #9333ea;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: calc(100vh - 70px);
+        }
+
+        .panel {
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            padding: 12px 15px;
+            background: #334155;
+            font-weight: bold;
+        }
+
+        textarea {
+            flex: 1;
+            width: 100%;
+            resize: none;
+            border: none;
+            outline: none;
+            padding: 20px;
+            background: #020617;
+            color: #e2e8f0;
+            font-family: Consolas, monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            direction: ltr;
+            text-align: left;
+        }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+
+        #outputText {
+            flex: 1;
+            background: #020617;
+            padding: 20px;
+            overflow: auto;
+            white-space: pre-wrap;
+            font-family: Consolas, monospace;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .status {
+            padding: 10px 15px;
+            background: #111827;
+            color: #cbd5e1;
+        }
+
+        .success {
+            color: #4ade80;
+        }
+
+        .error {
+            color: #f87171;
+        }
+
+        @media (max-width: 800px) {
+
+            header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .panel {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>💻 منصة الوسام للبرمجة</h1>
+
+    <div class="controls">
+
+        <select id="language" onchange="changeLanguage()">
+            <option value="html">HTML</option>
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+        </select>
+
+        <button class="run" onclick="runCode()">
+            ▶ تشغيل
+        </button>
+
+        <button class="test" onclick="testCode()">
+            🧪 اختبار
+        </button>
+
+        <button class="back" onclick="goBack()">
+            ↩ العودة
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="workspace">
+
+    <section class="panel">
+
+        <div class="panel-title">
+            📝 اكتب الكود هنا
+        </div>
+
+        <textarea id="code"></textarea>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-title">
+            🖥️ النتيجة
+        </div>
+
+        <iframe
+            id="preview"
+            sandbox="allow-scripts"
+            style="display:none;">
+        </iframe>
+
+        <div id="outputText">
+            اضغط "تشغيل" لرؤية النتيجة.
+        </div>
+
+        <div class="status" id="status">
+            جاهز
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+const examples = {
+
+    html: `<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+</head>
+<body>
+
+    <h1>Hello World!</h1>
+    <p>My first web page.</p>
+
+</body>
+</html>`,
+
+    javascript: `// Write your JavaScript code here
+
+let name = "Student";
+
+console.log("Hello " + name);`,
+
+    python: `# Write your Python code here
+
+name = "Student"
+
+print("Hello", name)`
+
+};
+
+
+const codeBox =
+    document.getElementById("code");
+
+const language =
+    document.getElementById("language");
+
+const preview =
+    document.getElementById("preview");
+
+const output =
+    document.getElementById("outputText");
+
+const status =
+    document.getElementById("status");
+
+
+function changeLanguage() {
+
+    codeBox.value =
+        examples[language.value];
+
+    preview.style.display =
+        "none";
+
+    output.style.display =
+        "block";
+
+    output.textContent =
+        'اضغط "تشغيل" لرؤية النتيجة.';
+
+    status.textContent =
+        "جاهز";
+
+    status.className =
+        "status";
+}
+
+
+function runCode() {
+
+    const lang =
+        language.value;
+
+    const code =
+        codeBox.value;
+
+
+    if (!code.trim()) {
+
+        status.textContent =
+            "اكتب الكود أولاً.";
+
+        status.className =
+            "status error";
+
+        return;
+    }
+
+
+    if (lang === "html") {
+
+        preview.style.display =
+            "block";
+
+        output.style.display =
+            "none";
+
+        preview.srcdoc =
+            code;
+
+        status.textContent =
+            "✓ تم تشغيل HTML";
+
+        status.className =
+            "status success";
+
+        return;
+    }
+
+
+    if (lang === "javascript") {
+
+        preview.style.display =
+            "none";
+
+        output.style.display =
+            "block";
+
+        try {
+
+            const logs = [];
+
+            const fakeConsole = {
+
+                log: function(...args) {
+                    logs.push(
+                        args.join(" ")
+                    );
+                },
+
+                error: function(...args) {
+                    logs.push(
+                        "ERROR: " +
+                        args.join(" ")
+                    );
+                }
+
+            };
+
+
+            const fn =
+                new Function(
+                    "console",
+                    code
+                );
+
+            fn(fakeConsole);
+
+
+            output.textContent =
+                logs.length
+                ? logs.join("\n")
+                : "تم تنفيذ الكود بدون مخرجات.";
+
+            status.textContent =
+                "✓ تم تشغيل JavaScript";
+
+            status.className =
+                "status success";
+
+        }
+
+        catch(error) {
+
+            output.textContent =
+                error.toString();
+
+            status.textContent =
+                "✗ يوجد خطأ في الكود";
+
+            status.className =
+                "status error";
+        }
+
+        return;
+    }
+
+
+    if (lang === "python") {
+
+        runPython(code);
+
+    }
+
+}
+
+
+async function runPython(code) {
+
+    output.style.display =
+        "block";
+
+    preview.style.display =
+        "none";
+
+    output.textContent =
+        "جاري تحميل Python...";
+
+    status.textContent =
+        "جاري تشغيل Python...";
+
+    status.className =
+        "status";
+
+
+    try {
+
+        if (
+            !window.pyodide
+        ) {
+
+            await loadPyodide();
+
+        }
+
+
+        let result =
+            await window.pyodide.runPythonAsync(
+                code
+            );
+
+
+        if (
+            result === undefined ||
+            result === null
+        ) {
+
+            output.textContent =
+                "تم تنفيذ الكود بدون قيمة إرجاع.";
+
+        } else {
+
+            output.textContent =
+                String(result);
+
+        }
+
+
+        status.textContent =
+            "✓ تم تشغيل Python";
+
+        status.className =
+            "status success";
+
+    }
+
+    catch(error) {
+
+        output.textContent =
+            error.toString();
+
+        status.textContent =
+            "✗ يوجد خطأ في Python";
+
+        status.className =
+            "status error";
+
+    }
+
+}
+
+
+function loadPyodide() {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const script =
+                document.createElement("script");
+
+            script.src =
+                "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js";
+
+
+            script.onload =
+                async function() {
+
+                    try {
+
+                        window.pyodide =
+                            await loadPyodide({
+                                indexURL:
+                                "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/"
+                            });
+
+                        resolve();
+
+                    }
+
+                    catch(error) {
+
+                        reject(error);
+
+                    }
+
+                };
+
+
+            script.onerror =
+                reject;
+
+            document.head.appendChild(
+                script
+            );
+
+        }
+    );
+
+}
+
+
+function testCode() {
+
+    const lang =
+        language.value;
+
+    const code =
+        codeBox.value.trim();
+
+
+    if (!code) {
+
+        status.textContent =
+            "اكتب الكود أولاً.";
+
+        status.className =
+            "status error";
+
+        return;
+    }
+
+
+    /*
+     * الاختبارات الحقيقية سيتم تحميلها
+     * من Supabase لاحقًا.
+     *
+     * حاليًا لدينا اختبار تجريبي.
+     */
+
+
+    if (lang === "html") {
+
+        if (
+            code.includes("<h1") &&
+            code.includes("</h1>")
+        ) {
+
+            output.textContent =
+                "✓ ممتاز!\nوجدنا عنصر H1 في الصفحة.";
+
+            status.textContent =
+                "✓ الاختبار ناجح";
+
+            status.className =
+                "status success";
+
+        } else {
+
+            output.textContent =
+                "✗ الاختبار لم ينجح.\nحاول إضافة عنصر <h1>.";
+
+            status.textContent =
+                "✗ الاختبار غير ناجح";
+
+            status.className =
+                "status error";
+        }
+
+        return;
+    }
+
+
+    if (lang === "javascript") {
+
+        if (
+            code.includes("console.log")
+        ) {
+
+            output.textContent =
+                "✓ الاختبار ناجح!\nوجدنا console.log في الكود.";
+
+            status.textContent =
+                "✓ الاختبار ناجح";
+
+            status.className =
+                "status success";
+
+        } else {
+
+            output.textContent =
+                "✗ حاول استخدام console.log لإظهار النتيجة.";
+
+            status.textContent =
+                "✗ الاختبار غير ناجح";
+
+            status.className =
+                "status error";
+        }
+
+        return;
+    }
+
+
+    if (lang === "python") {
+
+        if (
+            code.includes("print")
+        ) {
+
+            output.textContent =
+                "✓ الاختبار ناجح!\nوجدنا print في البرنامج.";
+
+            status.textContent =
+                "✓ الاختبار ناجح";
+
+            status.className =
+                "status success";
+
+        } else {
+
+            output.textContent =
+                "✗ حاول استخدام print لإظهار النتيجة.";
+
+            status.textContent =
+                "✗ الاختبار غير ناجح";
+
+            status.className =
+                "status error";
+        }
+
+    }
+
+}
+
+
+function goBack() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+changeLanguage();
+
+</script>
+
+</body>
+</html>

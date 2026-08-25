@@ -681,6 +681,17 @@ function goBack() {
 }
 
 
+const params = new URLSearchParams(window.location.search);
+const selectedLanguage = params.get("language");
+
+if (
+    selectedLanguage === "html" ||
+    selectedLanguage === "javascript" ||
+    selectedLanguage === "python"
+) {
+    language.value = selectedLanguage;
+}
+
 changeLanguage();
 
 </script>

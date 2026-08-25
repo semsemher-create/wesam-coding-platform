@@ -1,293 +1,526 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>محرر الأكواد - منصة الوسام</title>
+<meta charset="UTF-8">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, Tahoma, sans-serif;
-        }
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-        body {
-            margin: 0;
-            background: #0f172a;
-            color: white;
-            min-height: 100vh;
-        }
+<title>محرر الأكواد - منصة الوسام</title>
 
-        header {
-            background: #1e293b;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-        }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
+<style>
 
-        .controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+* {
+    box-sizing: border-box;
+    font-family: Arial, Tahoma, sans-serif;
+}
 
-        select,
-        button {
-            padding: 10px 15px;
-            border-radius: 7px;
-            border: none;
-            font-size: 15px;
-            cursor: pointer;
-        }
+body {
+    margin: 0;
+    background: #0f172a;
+    color: white;
+    min-height: 100vh;
+}
 
-        select {
-            background: white;
-            color: #111827;
-        }
+header {
+    background: #1e293b;
+    padding: 14px 18px;
 
-        button {
-            background: #2563eb;
-            color: white;
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        button:hover {
-            opacity: .9;
-        }
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-        .back {
-            background: #64748b;
-        }
+header h1 {
+    margin: 0;
+    font-size: 19px;
+}
 
-        .run {
-            background: #16a34a;
-        }
+.controls {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
 
-        .test {
-            background: #9333ea;
-        }
+button,
+select {
 
-        .workspace {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 10px;
-            height: calc(100vh - 70px);
-        }
+    padding: 10px 14px;
 
-        .panel {
-            background: #1e293b;
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    border: none;
 
-        .panel-title {
-            padding: 12px 15px;
-            background: #334155;
-            font-weight: bold;
-        }
+    border-radius: 7px;
 
-        textarea {
-            flex: 1;
-            width: 100%;
-            resize: none;
-            border: none;
-            outline: none;
-            padding: 20px;
-            background: #020617;
-            color: #e2e8f0;
-            font-family: Consolas, monospace;
-            font-size: 16px;
-            line-height: 1.6;
-            direction: ltr;
-            text-align: left;
-        }
+    font-size: 14px;
 
-        iframe {
-            flex: 1;
-            width: 100%;
-            border: none;
-            background: white;
-        }
+    cursor: pointer;
+}
 
-        #outputText {
-            flex: 1;
-            background: #020617;
-            padding: 20px;
-            overflow: auto;
-            white-space: pre-wrap;
-            font-family: Consolas, monospace;
-            direction: ltr;
-            text-align: left;
-        }
+select {
+    background: white;
+}
 
-        .status {
-            padding: 10px 15px;
-            background: #111827;
-            color: #cbd5e1;
-        }
+button {
+    color: white;
+}
 
-        .success {
-            color: #4ade80;
-        }
+.run {
+    background: #16a34a;
+}
 
-        .error {
-            color: #f87171;
-        }
+.test {
+    background: #9333ea;
+}
 
-        @media (max-width: 800px) {
+.save {
+    background: #0284c7;
+}
 
-            header {
-                flex-direction: column;
-                align-items: stretch;
-            }
+.back {
+    background: #64748b;
+}
 
-            .controls {
-                justify-content: center;
-            }
+.workspace {
 
-            .workspace {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
+    display: grid;
 
-            .panel {
-                height: 500px;
-            }
-        }
-    </style>
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    height: calc(100vh - 70px);
+}
+
+.panel {
+
+    background: #1e293b;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.title {
+
+    padding: 11px 14px;
+
+    background: #334155;
+
+    font-weight: bold;
+}
+
+textarea {
+
+    flex: 1;
+
+    width: 100%;
+
+    resize: none;
+
+    border: 0;
+
+    outline: 0;
+
+    padding: 18px;
+
+    background: #020617;
+
+    color: #e2e8f0;
+
+    font: 16px/1.6 Consolas, monospace;
+
+    direction: ltr;
+
+    text-align: left;
+}
+
+iframe {
+
+    flex: 1;
+
+    border: 0;
+
+    background: white;
+
+    width: 100%;
+}
+
+#output {
+
+    flex: 1;
+
+    background: #020617;
+
+    padding: 18px;
+
+    overflow: auto;
+
+    white-space: pre-wrap;
+
+    font: 15px Consolas, monospace;
+
+    direction: ltr;
+
+    text-align: left;
+}
+
+.status {
+
+    padding: 9px 14px;
+
+    background: #111827;
+
+    color: #cbd5e1;
+}
+
+.ok {
+    color: #4ade80;
+}
+
+.err {
+    color: #f87171;
+}
+
+.info {
+    color: #7dd3fc;
+}
+
+.student {
+
+    background: #0f766e;
+
+    padding: 8px 12px;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+}
+
+@media(max-width:800px) {
+
+    .workspace {
+
+        grid-template-columns: 1fr;
+
+        height: auto;
+    }
+
+    .panel {
+
+        height: 480px;
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
+
 <header>
 
-    <h1>💻 منصة الوسام للبرمجة</h1>
+<h1>
+💻 منصة الوسام للبرمجة
+</h1>
 
-    <div class="controls">
 
-        <select id="language" onchange="changeLanguage()">
-            <option value="html">HTML</option>
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-        </select>
+<div
+    class="student"
+    id="studentName">
+جاري تحميل بيانات الطالب...
+</div>
 
-        <button class="run" onclick="runCode()">
-            ▶ تشغيل
-        </button>
 
-        <button class="test" onclick="testCode()">
-            🧪 اختبار
-        </button>
+<div class="controls">
 
-        <button class="back" onclick="goBack()">
-            ↩ العودة
-        </button>
+<select id="language">
 
-    </div>
+<option value="html">
+HTML
+</option>
+
+<option value="javascript">
+JavaScript
+</option>
+
+<option value="python">
+Python
+</option>
+
+</select>
+
+
+<button
+    class="run"
+    onclick="runCode()">
+
+▶ تشغيل
+
+</button>
+
+
+<button
+    class="test"
+    onclick="testCode()">
+
+🧪 اختبار
+
+</button>
+
+
+<button
+    class="save"
+    onclick="saveSubmission()">
+
+💾 حفظ الحل
+
+</button>
+
+
+<button
+    class="back"
+    onclick="goBack()">
+
+↩ العودة
+
+</button>
+
+</div>
 
 </header>
 
 
 <div class="workspace">
 
-    <section class="panel">
 
-        <div class="panel-title">
-            📝 اكتب الكود هنا
-        </div>
+<section class="panel">
 
-        <textarea id="code"></textarea>
+<div class="title">
 
-    </section>
+📝 اكتب الكود هنا
+
+</div>
 
 
-    <section class="panel">
+<textarea
+    id="code">
+</textarea>
 
-        <div class="panel-title">
-            🖥️ النتيجة
-        </div>
+</section>
 
-        <iframe
-            id="preview"
-            sandbox="allow-scripts"
-            style="display:none;">
-        </iframe>
 
-        <div id="outputText">
-            اضغط "تشغيل" لرؤية النتيجة.
-        </div>
+<section class="panel">
 
-        <div class="status" id="status">
-            جاهز
-        </div>
+<div class="title">
 
-    </section>
+🖥️ النتيجة
+
+</div>
+
+
+<iframe
+    id="preview"
+    sandbox="allow-scripts"
+    style="display:none">
+</iframe>
+
+
+<div id="output">
+
+اضغط تشغيل لرؤية النتيجة.
+
+</div>
+
+
+<div
+    id="status"
+    class="status">
+
+جاهز
+
+</div>
+
+</section>
 
 </div>
 
 
 <script>
 
+
+/* ============================
+   SUPABASE
+============================ */
+
+
+const SUPABASE_URL =
+"https://oasopihyqihimusvxxgz.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_rSyI387VFkKK9EhSxFR5uw_iMYddziS";
+
+
+const db =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* ============================
+   عناصر الصفحة
+============================ */
+
+
+const codeBox =
+document.getElementById("code");
+
+
+const language =
+document.getElementById("language");
+
+
+const preview =
+document.getElementById("preview");
+
+
+const output =
+document.getElementById("output");
+
+
+const status =
+document.getElementById("status");
+
+
+const studentName =
+document.getElementById("studentName");
+
+
+/* ============================
+   بيانات الطالب
+============================ */
+
+
+const studentId =
+localStorage.getItem("studentId");
+
+
+const savedName =
+localStorage.getItem("studentName");
+
+
+if (!studentId) {
+
+    alert(
+        "يجب تسجيل الدخول أولاً."
+    );
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+studentName.textContent =
+savedName || "الطالب";
+
+
+/* ============================
+   أمثلة الأكواد
+============================ */
+
+
 const examples = {
 
-    html: `<!DOCTYPE html>
+
+html:
+
+`<!DOCTYPE html>
+
 <html>
+
 <head>
-    <title>My Page</title>
+
+<title>My Page</title>
+
 </head>
+
 <body>
 
-    <h1>Hello World!</h1>
-    <p>My first web page.</p>
+<h1>بسم الله</h1>
+
+<p>My first page.</p>
 
 </body>
+
 </html>`,
 
-    javascript: `// Write your JavaScript code here
 
-let name = "Student";
+
+javascript:
+
+`let name = "Student";
 
 console.log("Hello " + name);`,
 
-    python: `# Write your Python code here
 
-name = "Student"
+
+python:
+
+`name = "Student"
 
 print("Hello", name)`
 
 };
 
 
-const codeBox =
-    document.getElementById("code");
+/* ============================
+   الحالة
+============================ */
 
-const language =
-    document.getElementById("language");
 
-const preview =
-    document.getElementById("preview");
+function setStatus(
+    text,
+    type = ""
+) {
 
-const output =
-    document.getElementById("outputText");
+    status.textContent =
+        text;
 
-const status =
-    document.getElementById("status");
+    status.className =
+        "status " + type;
+
+}
+
+
+/* ============================
+   تغيير اللغة
+============================ */
 
 
 function changeLanguage() {
 
     codeBox.value =
-        examples[language.value];
+        examples[
+            language.value
+        ];
 
     preview.style.display =
         "none";
@@ -296,14 +529,18 @@ function changeLanguage() {
         "block";
 
     output.textContent =
-        'اضغط "تشغيل" لرؤية النتيجة.';
+        "اضغط تشغيل لرؤية النتيجة.";
 
-    status.textContent =
-        "جاهز";
+    setStatus(
+        "جاهز"
+    );
 
-    status.className =
-        "status";
 }
+
+
+/* ============================
+   تشغيل الكود
+============================ */
 
 
 function runCode() {
@@ -311,20 +548,24 @@ function runCode() {
     const lang =
         language.value;
 
+
     const code =
         codeBox.value;
 
 
     if (!code.trim()) {
 
-        status.textContent =
-            "اكتب الكود أولاً.";
-
-        status.className =
-            "status error";
+        setStatus(
+            "اكتب الكود أولاً.",
+            "err"
+        );
 
         return;
+
     }
+
+
+    /* HTML */
 
 
     if (lang === "html") {
@@ -335,20 +576,28 @@ function runCode() {
         output.style.display =
             "none";
 
+
         preview.srcdoc =
             code;
 
-        status.textContent =
-            "✓ تم تشغيل HTML";
 
-        status.className =
-            "status success";
+        setStatus(
+            "✓ تم تشغيل HTML",
+            "ok"
+        );
 
         return;
+
     }
 
 
-    if (lang === "javascript") {
+    /* JavaScript */
+
+
+    if (
+        lang ===
+        "javascript"
+    ) {
 
         preview.style.display =
             "none";
@@ -356,47 +605,56 @@ function runCode() {
         output.style.display =
             "block";
 
+
         try {
 
-            const logs = [];
+            let logs = [];
+
 
             const fakeConsole = {
 
-                log: function(...args) {
+                log:
+                (...args) => {
+
                     logs.push(
                         args.join(" ")
                     );
+
                 },
 
-                error: function(...args) {
+                error:
+                (...args) => {
+
                     logs.push(
                         "ERROR: " +
                         args.join(" ")
                     );
+
                 }
 
             };
 
 
-            const fn =
-                new Function(
-                    "console",
-                    code
-                );
-
-            fn(fakeConsole);
+            new Function(
+                "console",
+                code
+            )(
+                fakeConsole
+            );
 
 
             output.textContent =
                 logs.length
-                ? logs.join("\n")
-                : "تم تنفيذ الكود بدون مخرجات.";
+                ?
+                logs.join("\n")
+                :
+                "تم تنفيذ الكود بدون مخرجات.";
 
-            status.textContent =
-                "✓ تم تشغيل JavaScript";
 
-            status.className =
-                "status success";
+            setStatus(
+                "✓ تم تشغيل JavaScript",
+                "ok"
+            );
 
         }
 
@@ -405,27 +663,45 @@ function runCode() {
             output.textContent =
                 error.toString();
 
-            status.textContent =
-                "✗ يوجد خطأ في الكود";
 
-            status.className =
-                "status error";
+            setStatus(
+                "✗ يوجد خطأ في JavaScript",
+                "err"
+            );
+
         }
 
+
         return;
+
     }
 
 
-    if (lang === "python") {
+    /* Python */
 
-        runPython(code);
+
+    if (
+        lang ===
+        "python"
+    ) {
+
+        runPython(
+            code
+        );
 
     }
 
 }
 
 
-async function runPython(code) {
+/* ============================
+   تشغيل Python
+============================ */
+
+
+async function runPython(
+    code
+) {
 
     output.style.display =
         "block";
@@ -433,14 +709,14 @@ async function runPython(code) {
     preview.style.display =
         "none";
 
+
     output.textContent =
         "جاري تحميل Python...";
 
-    status.textContent =
-        "جاري تشغيل Python...";
 
-    status.className =
-        "status";
+    setStatus(
+        "جاري تشغيل Python..."
+    );
 
 
     try {
@@ -454,50 +730,47 @@ async function runPython(code) {
         }
 
 
-        let result =
+        const result =
             await window.pyodide.runPythonAsync(
                 code
             );
 
 
-        if (
-            result === undefined ||
-            result === null
-        ) {
-
-            output.textContent =
-                "تم تنفيذ الكود بدون قيمة إرجاع.";
-
-        } else {
-
-            output.textContent =
-                String(result);
-
-        }
+        output.textContent =
+            result !== undefined
+            ?
+            String(result)
+            :
+            "تم تنفيذ الكود.";
 
 
-        status.textContent =
-            "✓ تم تشغيل Python";
-
-        status.className =
-            "status success";
+        setStatus(
+            "✓ تم تشغيل Python",
+            "ok"
+        );
 
     }
+
 
     catch(error) {
 
         output.textContent =
             error.toString();
 
-        status.textContent =
-            "✗ يوجد خطأ في Python";
 
-        status.className =
-            "status error";
+        setStatus(
+            "✗ يوجد خطأ في Python",
+            "err"
+        );
 
     }
 
 }
+
+
+/* ============================
+   تحميل Python
+============================ */
 
 
 function loadPyodide() {
@@ -506,7 +779,10 @@ function loadPyodide() {
         (resolve, reject) => {
 
             const script =
-                document.createElement("script");
+                document.createElement(
+                    "script"
+                );
+
 
             script.src =
                 "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js";
@@ -518,10 +794,13 @@ function loadPyodide() {
                     try {
 
                         window.pyodide =
-                            await loadPyodide({
-                                indexURL:
-                                "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/"
-                            });
+                            await window.loadPyodide(
+                                {
+                                    indexURL:
+                                    "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/"
+                                }
+                            );
+
 
                         resolve();
 
@@ -529,7 +808,9 @@ function loadPyodide() {
 
                     catch(error) {
 
-                        reject(error);
+                        reject(
+                            error
+                        );
 
                     }
 
@@ -538,6 +819,7 @@ function loadPyodide() {
 
             script.onerror =
                 reject;
+
 
             document.head.appendChild(
                 script
@@ -549,10 +831,16 @@ function loadPyodide() {
 }
 
 
+/* ============================
+   اختبار الكود
+============================ */
+
+
 function testCode() {
 
     const lang =
         language.value;
+
 
     const code =
         codeBox.value.trim();
@@ -560,117 +848,218 @@ function testCode() {
 
     if (!code) {
 
-        status.textContent =
-            "اكتب الكود أولاً.";
+        setStatus(
+            "اكتب الكود أولاً.",
+            "err"
+        );
 
-        status.className =
-            "status error";
+        return false;
 
-        return;
+    }
+
+
+    let passed = false;
+
+
+    if (
+        lang === "html"
+    ) {
+
+        passed =
+            code.includes("<h1")
+            &&
+            code.includes("</h1>");
+
     }
 
 
-    /*
-     * الاختبارات الحقيقية سيتم تحميلها
-     * من Supabase لاحقًا.
-     *
-     * حاليًا لدينا اختبار تجريبي.
-     */
+    if (
+        lang === "javascript"
+    ) {
+
+        passed =
+            code.includes(
+                "console.log"
+            );
+
+    }
 
 
-    if (lang === "html") {
+    if (
+        lang === "python"
+    ) {
 
-        if (
-            code.includes("<h1") &&
-            code.includes("</h1>")
-        ) {
+        passed =
+            /\bprint\s*\(/.test(
+                code
+            );
 
-            output.textContent =
-                "✓ ممتاز!\nوجدنا عنصر H1 في الصفحة.";
-
-            status.textContent =
-                "✓ الاختبار ناجح";
-
-            status.className =
-                "status success";
-
-        } else {
-
-            output.textContent =
-                "✗ الاختبار لم ينجح.\nحاول إضافة عنصر <h1>.";
-
-            status.textContent =
-                "✗ الاختبار غير ناجح";
-
-            status.className =
-                "status error";
-        }
-
-        return;
     }
 
 
-    if (lang === "javascript") {
+    output.style.display =
+        "block";
 
-        if (
-            code.includes("console.log")
-        ) {
+    preview.style.display =
+        "none";
 
-            output.textContent =
-                "✓ الاختبار ناجح!\nوجدنا console.log في الكود.";
 
-            status.textContent =
-                "✓ الاختبار ناجح";
+    if (passed) {
 
-            status.className =
-                "status success";
+        output.textContent =
+            "✓ الاختبار ناجح!\nأحسنت.";
 
-        } else {
 
-            output.textContent =
-                "✗ حاول استخدام console.log لإظهار النتيجة.";
+        setStatus(
+            "✓ الاختبار ناجح",
+            "ok"
+        );
 
-            status.textContent =
-                "✗ الاختبار غير ناجح";
+    }
 
-            status.className =
-                "status error";
-        }
+    else {
 
-        return;
+        output.textContent =
+            "✗ الاختبار غير ناجح.\nراجع المطلوب وحاول مرة أخرى.";
+
+
+        setStatus(
+            "✗ الاختبار غير ناجح",
+            "err"
+        );
+
     }
 
 
-    if (lang === "python") {
-
-        if (
-            code.includes("print")
-        ) {
-
-            output.textContent =
-                "✓ الاختبار ناجح!\nوجدنا print في البرنامج.";
-
-            status.textContent =
-                "✓ الاختبار ناجح";
-
-            status.className =
-                "status success";
-
-        } else {
-
-            output.textContent =
-                "✗ حاول استخدام print لإظهار النتيجة.";
-
-            status.textContent =
-                "✗ الاختبار غير ناجح";
-
-            status.className =
-                "status error";
-        }
-
-    }
+    return passed;
 
 }
+
+
+/* ============================
+   حفظ الحل
+============================ */
+
+
+async function saveSubmission() {
+
+    if (!studentId) {
+
+        setStatus(
+            "لم يتم التعرف على الطالب.",
+            "err"
+        );
+
+        return;
+
+    }
+
+
+    const code =
+        codeBox.value.trim();
+
+
+    if (!code) {
+
+        setStatus(
+            "اكتب الكود أولاً.",
+            "err"
+        );
+
+        return;
+
+    }
+
+
+    setStatus(
+        "جاري حفظ الحل..."
+    );
+
+
+    const passed =
+        testCode();
+
+
+    const {
+
+        data,
+        error
+
+    } = await db.rpc(
+
+        "record_coding_submission",
+
+        {
+
+            p_student_id:
+                studentId,
+
+            p_task_id:
+                null,
+
+            p_language:
+                language.value,
+
+            p_source_code:
+                code,
+
+            p_test_status:
+                passed
+                ?
+                "passed"
+                :
+                "failed",
+
+            p_test_output:
+                output.textContent,
+
+            p_score:
+                passed
+                ?
+                100
+                :
+                0
+
+        }
+
+    );
+
+
+    if (error) {
+
+        console.error(
+            error
+        );
+
+
+        setStatus(
+            "حدث خطأ أثناء حفظ الحل: " +
+            error.message,
+            "err"
+        );
+
+
+        return;
+
+    }
+
+
+    setStatus(
+        "✓ تم حفظ الحل بنجاح",
+        "ok"
+    );
+
+
+    alert(
+        "تم حفظ الحل بنجاح في قاعدة البيانات."
+    );
+
+}
+
+
+/* ============================
+   العودة
+============================ */
 
 
 function goBack() {
@@ -681,20 +1070,57 @@ function goBack() {
 }
 
 
-const params = new URLSearchParams(window.location.search);
-const selectedLanguage = params.get("language");
+/* ============================
+   اللغة الموجودة في الرابط
+============================ */
+
+
+const params =
+new URLSearchParams(
+    window.location.search
+);
+
+
+const selectedLanguage =
+params.get(
+    "language"
+);
+
 
 if (
-    selectedLanguage === "html" ||
-    selectedLanguage === "javascript" ||
-    selectedLanguage === "python"
+
+    selectedLanguage ===
+    "html"
+
+    ||
+
+    selectedLanguage ===
+    "javascript"
+
+    ||
+
+    selectedLanguage ===
+    "python"
+
 ) {
-    language.value = selectedLanguage;
+
+    language.value =
+        selectedLanguage;
+
 }
 
+
+language.addEventListener(
+    "change",
+    changeLanguage
+);
+
+
 changeLanguage();
+
 
 </script>
 
 </body>
+
 </html>

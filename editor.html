@@ -836,11 +836,10 @@ function loadPyodide() {
 ============================ */
 
 
-function testCode() {
+async function testCode() {
 
     const lang =
         language.value;
-
 
     const code =
         codeBox.value.trim();
@@ -858,69 +857,188 @@ function testCode() {
     }
 
 
-    let passed = false;
+    try {
+
+        /* =========================
+           HTML
+        ========================= */
+
+        if (lang === "html") {
+
+            const tags = [];
+
+            const tagPattern =
+                /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g;
+
+            const voidTags =
+                [
+                    "img",
+                    "br",
+                    "hr",
+                    "meta",
+                    "link",
+                    "input"
+                ];
 
 
-    if (
-        lang === "html"
-    ) {
-
-        passed =
-            code.includes("<h1")
-            &&
-            code.includes("</h1>");
-
-    }
+            let match;
 
 
-    if (
-        lang === "javascript"
-    ) {
+            while (
+                (match =
+                    tagPattern.exec(code))
+                !== null
+            ) {
 
-        passed =
-            code.includes(
-                "console.log"
+                const fullTag =
+                    match[0];
+
+                const tagName =
+                    match[1].toLowerCase();
+
+
+                if (
+                    voidTags.includes(
+                        tagName
+                    )
+                ) {
+
+                    continue;
+
+                }
+
+
+                if (
+                    fullTag.startsWith("</")
+                ) {
+
+                    const lastTag =
+                        tags.pop();
+
+
+                    if (
+                        lastTag !==
+                        tagName
+                    ) {
+
+                        throw new Error(
+                            "يوجد خطأ في إغلاق الوسم: " +
+                            tagName
+                        );
+
+                    }
+
+                }
+
+                else if (
+                    !fullTag.endsWith("/>")
+                ) {
+
+                    tags.push(
+                        tagName
+                    );
+
+                }
+
+            }
+
+
+            if (
+                tags.length > 0
+            ) {
+
+                throw new Error(
+                    "يوجد وسم غير مغلق: <" +
+                    tags[
+                        tags.length - 1
+                    ] +
+                    ">"
+                );
+
+            }
+
+
+            output.textContent =
+                "✓ كود HTML سليم.";
+
+            setStatus(
+                "✓ الاختبار ناجح",
+                "ok"
             );
 
-    }
+            return true;
+
+        }
 
 
-    if (
-        lang === "python"
-    ) {
+        /* =========================
+           JavaScript
+        ========================= */
 
-        passed =
-            /\bprint\s*\(/.test(
+        if (
+            lang === "javascript"
+        ) {
+
+            new Function(
                 code
             );
 
+
+            output.textContent =
+                "✓ كود JavaScript سليم.";
+
+            setStatus(
+                "✓ الاختبار ناجح",
+                "ok"
+            );
+
+            return true;
+
+        }
+
+
+        /* =========================
+           Python
+        ========================= */
+
+        if (
+            lang === "python"
+        ) {
+
+            if (
+                !window.pyodide
+            ) {
+
+                await loadPyodide();
+
+            }
+
+
+            await window.pyodide.runPythonAsync(
+                code
+            );
+
+
+            output.textContent =
+                "✓ كود Python يعمل بدون أخطاء.";
+
+            setStatus(
+                "✓ الاختبار ناجح",
+                "ok"
+            );
+
+            return true;
+
+        }
+
     }
 
 
-    output.style.display =
-        "block";
-
-    preview.style.display =
-        "none";
-
-
-    if (passed) {
+    catch (error) {
 
         output.textContent =
-            "✓ الاختبار ناجح!\nأحسنت.";
-
-
-        setStatus(
-            "✓ الاختبار ناجح",
-            "ok"
-        );
-
-    }
-
-    else {
-
-        output.textContent =
-            "✗ الاختبار غير ناجح.\nراجع المطلوب وحاول مرة أخرى.";
+            "✗ يوجد خطأ:\n\n" +
+            error.message;
 
 
         setStatus(
@@ -928,10 +1046,10 @@ function testCode() {
             "err"
         );
 
+
+        return false;
+
     }
-
-
-    return passed;
 
 }
 
@@ -976,8 +1094,7 @@ async function saveSubmission() {
     );
 
 
-    const passed =
-        testCode();
+const passed = await testCode();
 
 
     const {

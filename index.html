@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>منصة الوسام للبرمجة</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Tahoma, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 0;
+            opacity: .9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 45px auto;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0,0,0,.08);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+
+        .login-card p {
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 17px;
+            text-align: center;
+            direction: ltr;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 13px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            transition: .2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .demo {
+            margin-top: 20px;
+            background: #eff6ff;
+            padding: 12px;
+            border-radius: 10px;
+            color: #1e40af;
+            font-size: 14px;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        }
+
+        .welcome h2 {
+            margin-top: 0;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        .logout {
+            background: #64748b;
+            margin-top: 25px;
+        }
+
+        .logout:hover {
+            background: #475569;
+        }
+
+        #message {
+            margin-top: 15px;
+            min-height: 24px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .login-card {
+                padding: 25px 18px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>💻 منصة الوسام للبرمجة</h1>
+    <p>تعلم البرمجة واكتب كودك واختبره بنفسك</p>
+</header>
+
+<main class="container">
+
+    <!-- تسجيل دخول الطالب -->
+    <section id="loginSection" class="login-card">
+
+        <h2>دخول الطالب</h2>
+
+        <p>
+            أدخل كود الطالب الخاص بك للدخول إلى المنصة
+        </p>
+
+        <input
+            id="studentCode"
+            type="text"
+            placeholder="مثال: ST-1001"
+            autocomplete="off"
+        >
+
+        <button onclick="loginStudent()">
+            دخول إلى المنصة
+        </button>
+
+        <div id="message"></div>
+
+        <div class="demo">
+            للتجربة فقط استخدم الكود:
+            <strong>ST-1001</strong>
+        </div>
+
+    </section>
+
+
+    <!-- لوحة الطالب -->
+    <section id="dashboard" class="dashboard">
+
+        <div class="welcome">
+
+            <h2>
+                أهلاً بك يا
+                <span id="studentName"></span> 👋
+            </h2>
+
+            <p>
+                اختر المهارة التي تريد التدريب عليها.
+            </p>
+
+        </div>
+
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>🌐 HTML</h3>
+                <p>
+                    تعلم إنشاء صفحات الويب وكتابة عناصر HTML.
+                </p>
+
+                <button onclick="openEditor('html')">
+                    ابدأ HTML
+                </button>
+            </div>
+
+
+            <div class="card">
+                <h3>⚡ JavaScript</h3>
+                <p>
+                    اكتب JavaScript وشاهد نتيجة الكود مباشرة.
+                </p>
+
+                <button onclick="openEditor('javascript')">
+                    ابدأ JavaScript
+                </button>
+            </div>
+
+
+            <div class="card">
+                <h3>🐍 Python</h3>
+                <p>
+                    تعلم Python واختبر برامجك داخل المنصة.
+                </p>
+
+                <button onclick="openEditor('python')">
+                    ابدأ Python
+                </button>
+            </div>
+
+        </div>
+
+
+        <button class="logout" onclick="logout()">
+            تسجيل الخروج
+        </button>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    function loginStudent() {
+
+        const code =
+            document.getElementById("studentCode").value
+            .trim()
+            .toUpperCase();
+
+        const message =
+            document.getElementById("message");
+
+        if (!code) {
+
+            message.textContent =
+                "من فضلك أدخل كود الطالب.";
+
+            message.style.color = "#dc2626";
+
+            return;
+        }
+
+
+        /*
+         * النسخة التجريبية الأولى
+         * سيتم استبدالها لاحقًا بقاعدة Supabase
+         */
+
+        if (code === "ST-1001") {
+
+            localStorage.setItem(
+                "studentCode",
+                code
+            );
+
+            localStorage.setItem(
+                "studentName",
+                "طالب تجريبي"
+            );
+
+            showDashboard();
+
+        } else {
+
+            message.textContent =
+                "كود الطالب غير صحيح.";
+
+            message.style.color =
+                "#dc2626";
+        }
+    }
+
+
+    function showDashboard() {
+
+        const name =
+            localStorage.getItem("studentName")
+            || "الطالب";
+
+        document.getElementById(
+            "studentName"
+        ).textContent = name;
+
+        document.getElementById(
+            "loginSection"
+        ).style.display = "none";
+
+        document.getElementById(
+            "dashboard"
+        ).style.display = "block";
+    }
+
+
+    function logout() {
+
+        localStorage.removeItem(
+            "studentCode"
+        );
+
+        localStorage.removeItem(
+            "studentName"
+        );
+
+        document.getElementById(
+            "dashboard"
+        ).style.display = "none";
+
+        document.getElementById(
+            "loginSection"
+        ).style.display = "block";
+
+        document.getElementById(
+            "studentCode"
+        ).value = "";
+    }
+
+
+    function openEditor(language) {
+
+        alert(
+            "محرر " +
+            language +
+            " سيتم تشغيله في الخطوة التالية."
+        );
+    }
+
+
+    /*
+     * إذا كان الطالب قد سجل دخوله سابقًا
+     * نفتح لوحة التحكم تلقائيًا.
+     */
+
+    if (
+        localStorage.getItem("studentCode")
+    ) {
+
+        showDashboard();
+
+    }
+
+</script>
+
+</body>
+</html>

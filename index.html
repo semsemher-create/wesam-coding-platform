@@ -268,122 +268,186 @@
 </main>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
-    function loginStudent() {
+const SUPABASE_URL =
+    "https://oasopihyqihimusvxxgz.supabase.co";
 
-        const code =
-            document.getElementById("studentCode").value
+const SUPABASE_KEY =
+    "sb_publishable_rSyI387VFkKK9EhSxFR5uw_iMYddziS";
+
+const db =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+async function loginStudent() {
+
+    const code =
+        document
+            .getElementById("studentCode")
+            .value
             .trim()
             .toUpperCase();
 
-        const message =
-            document.getElementById("message");
-
-        if (!code) {
-
-            message.textContent =
-                "من فضلك أدخل كود الطالب.";
-
-            message.style.color = "#dc2626";
-
-            return;
-        }
+    const message =
+        document.getElementById("message");
 
 
-        /*
-         * النسخة التجريبية الأولى
-         * سيتم استبدالها لاحقًا بقاعدة Supabase
-         */
+    if (!code) {
 
-        if (code === "ST-1001") {
+        message.textContent =
+            "من فضلك أدخل كود الطالب.";
 
-            localStorage.setItem(
-                "studentCode",
-                code
-            );
+        message.style.color =
+            "#dc2626";
 
-            localStorage.setItem(
-                "studentName",
-                "طالب تجريبي"
-            );
-
-            showDashboard();
-
-        } else {
-
-            message.textContent =
-                "كود الطالب غير صحيح.";
-
-            message.style.color =
-                "#dc2626";
-        }
+        return;
     }
 
 
-    function showDashboard() {
+    message.textContent =
+        "جاري التحقق من الكود...";
 
-        const name =
-            localStorage.getItem("studentName")
-            || "الطالب";
-
-        document.getElementById(
-            "studentName"
-        ).textContent = name;
-
-        document.getElementById(
-            "loginSection"
-        ).style.display = "none";
-
-        document.getElementById(
-            "dashboard"
-        ).style.display = "block";
-    }
+    message.style.color =
+        "#2563eb";
 
 
-    function logout() {
-
-        localStorage.removeItem(
-            "studentCode"
+    const { data, error } =
+        await db.rpc(
+            "login_student_by_code",
+            {
+                p_student_code: code
+            }
         );
 
-        localStorage.removeItem(
-            "studentName"
-        );
 
-        document.getElementById(
-            "dashboard"
-        ).style.display = "none";
+    if (error) {
 
-        document.getElementById(
-            "loginSection"
-        ).style.display = "block";
+        console.error(error);
 
-        document.getElementById(
-            "studentCode"
-        ).value = "";
+        message.textContent =
+            "حدث خطأ أثناء الاتصال بقاعدة البيانات.";
+
+        message.style.color =
+            "#dc2626";
+
+        return;
     }
+
+
+    if (!data || data.length === 0) {
+
+        message.textContent =
+            "كود الطالب غير صحيح.";
+
+        message.style.color =
+            "#dc2626";
+
+        return;
+    }
+
+
+    const student =
+        data[0];
+
+
+    localStorage.setItem(
+        "studentId",
+        student.student_id
+    );
+
+
+    localStorage.setItem(
+        "studentCode",
+        student.student_code
+    );
+
+
+    localStorage.setItem(
+        "studentName",
+        student.full_name
+    );
+
+
+    showDashboard();
+}
+
+
+function showDashboard() {
+
+    const name =
+        localStorage.getItem(
+            "studentName"
+        ) || "الطالب";
+
+
+    document.getElementById(
+        "studentName"
+    ).textContent = name;
+
+
+    document.getElementById(
+        "loginSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "dashboard"
+    ).style.display = "block";
+}
+
+
+function logout() {
+
+    localStorage.removeItem(
+        "studentId"
+    );
+
+    localStorage.removeItem(
+        "studentCode"
+    );
+
+    localStorage.removeItem(
+        "studentName"
+    );
+
+
+    document.getElementById(
+        "dashboard"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "loginSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "studentCode"
+    ).value = "";
+}
 
 
 function openEditor(language) {
+
     window.location.href =
         "editor.html?language=" +
         encodeURIComponent(language);
 }
 
 
-    /*
-     * إذا كان الطالب قد سجل دخوله سابقًا
-     * نفتح لوحة التحكم تلقائيًا.
-     */
+if (
+    localStorage.getItem("studentId")
+) {
 
-    if (
-        localStorage.getItem("studentCode")
-    ) {
+    showDashboard();
 
-        showDashboard();
-
-    }
+}
 
 </script>
 
